@@ -59,8 +59,16 @@ const sendmessage = async (req, res, next) => {
         const message = await prisma.message.create({
             data: {
                 content,
-                senderId: req.user.id,
-                receiverId
+                sender: {
+                    connect: {
+                        id: req.user.id
+                    }
+                },
+                receiver: {
+                    connect: {
+                        id: receiverId
+                    }
+                }
             }
         });
 
@@ -68,11 +76,11 @@ const sendmessage = async (req, res, next) => {
             message: "Message sent successfully",
             data: message
         });
+
     } catch (error) {
         next(error);
     }
 };
-
 
 const update = async (req, res, next) => {
     try {
@@ -151,12 +159,40 @@ const deleted = async (req, res, next) => {
         next(error);
     }
 };
+const getConversation = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
 
+        const messages = await prisma.message.findMany({
+            where: {
+                OR: [
+                    {
+                        senderId: req.user.id,
+                        receiverId: userId
+                    },
+                    {
+                        senderId: userId,
+                        receiverId: req.user.id
+                    }
+                ]
+            },
+            orderBy: {
+                createdAt: "asc"
+            }
+        });
+
+        res.status(200).json(messages);
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 module.exports = {
     getmessages,
     getmessage,
     sendmessage,
+    getConversation,
     update,
     deleted
 };

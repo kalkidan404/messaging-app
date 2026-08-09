@@ -5,7 +5,8 @@ const {
     getmessage,
     sendmessage,
     update,
-    deleted
+    deleted, 
+    getConversation
 } = require("../controller/messageController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -21,5 +22,5 @@ router.post("/send", authMiddleware, sendmessage);
 router.put("/:id", authMiddleware, update);
 
 router.delete("/:id", authMiddleware, deleted);
-
+router.get("/conversation/:userId", authMiddleware, getConversation);
 module.exports = router;
