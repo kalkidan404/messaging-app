@@ -26,49 +26,94 @@ const getUser = async (req, res, next) => {
         next(error);
     }
 };
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        profileImage: true
+      }
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 const updateUser = async (req, res, next) => {
-    try {
-        const { name, profileImage } = req.body;
+  try {
+    const { name } = req.body;
 
-        const user = await prisma.user.findUnique({
-            where: {
-                id: req.user.id
-            }
-        });
-
-        if (!user) {
-            return res.status(404).json({
-                message: "Account not found"
-            });
-        }
-
-        const updatedUser = await prisma.user.update({
-    where: {
+    const user = await prisma.user.findUnique({
+      where: {
         id: req.user.id
-    },
-    data: {
-        name,
-        profileImage
-    },
-    select: {
-        id: true,
-        email: true,
-        name: true,
-        profileImage: true
-    }
-});
+      }
+    });
 
-        res.status(200).json({
-            message: "Account updated",
-            user: updatedUser
+    if (!user) {
+      return res.status(404).json({
+        message: "Account not found"
+      });
+    }
+
+    let profileImage = user.profileImage;
+
+    if (req.file) {
+      const cloudinary = require("../config/cloudinary");
+
+      profileImage =
+        await new Promise((resolve, reject) => {
+          const uploadStream =
+            cloudinary.uploader.upload_stream(
+              {
+                folder: "messaging-app/profiles",
+                resource_type: "image"
+              },
+              (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result.secure_url);
+                }
+              }
+            );
+
+          uploadStream.end(req.file.buffer);
         });
-
-    } catch (error) {
-        next(error);
     }
+
+    const updatedUser =
+      await prisma.user.update({
+        where: {
+          id: req.user.id
+        },
+
+        data: {
+          name: name?.trim() || user.name,
+          profileImage
+        },
+
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          profileImage: true
+        }
+      });
+
+    res.status(200).json({
+      message: "Account updated",
+      user: updatedUser
+    });
+
+  } catch (error) {
+    next(error);
+  }
 };
+
 
 
 const deleteAccount = async (req, res, next) => {
@@ -104,5 +149,6 @@ const deleteAccount = async (req, res, next) => {
 module.exports = {
     getUser,
     updateUser,
-    deleteAccount
+    deleteAccount,
+    getUsers
 };
