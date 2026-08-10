@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { getUsers } from "../api/users";
 import { getMessages } from "../api/messages";
 
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/SideBar";
 import ConversationList from "../components/ConversationList";
 import ChatWindow from "../components/ChatWindow";
 
