@@ -809,58 +809,6 @@ a {
    MOBILE
 ========================= */
 
-@media (max-width: 900px) {
-  .messaging-page {
-    grid-template-columns:
-      80px
-      280px
-      1fr;
-  }
-
-  .profile-info {
-    display: none;
-  }
-
-  .sidebar {
-    align-items: center;
-
-    padding: 20px 10px;
-  }
-
-  .profile-section {
-    width: 55px;
-
-    padding: 0;
-  }
-
-  .profile-avatar {
-    position: relative;
-
-    top: auto;
-    right: auto;
-  }
-
-  .edit-profile-button {
-    font-size: 0;
-  }
-
-  .edit-profile-button::after {
-    content: "✎";
-
-    font-size: 1rem;
-  }
-
-  .logout-button {
-    font-size: 0;
-  }
-
-  .logout-button::after {
-    content: "↪";
-
-    font-size: 1.2rem;
-  }
-}
-
 @media (max-width: 650px) {
   .messaging-page {
     grid-template-columns: 1fr;
@@ -870,8 +818,51 @@ a {
     display: none;
   }
 
+  .conversation-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    background: #fffaf0;
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .conversation-panel.open {
+    transform: translateX(0);
+  }
+
   .conversation-list {
+    height: 100%;
+    box-sizing: border-box;
+    border-right: none;
+  }
+
+  .conversation-overlay {
     display: none;
+  }
+
+  .conversation-overlay.visible {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .mobile-conversations-button {
+    display: block;
+    margin: 15px;
+    padding: 10px 14px;
+    border: 1px solid #d8c9b8;
+    border-radius: 8px;
+    background: #fffaf0;
+    font-size: 0.9rem;
+    cursor: pointer;
   }
 
   .message {
