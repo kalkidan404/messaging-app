@@ -804,6 +804,18 @@ a {
 .message-form button:hover {
   background: #9b5c63;
 }
+.conversation-panel {
+  display: contents;
+}
+
+.conversation-overlay {
+  display: none;
+}
+
+.mobile-conversations-button,
+.mobile-chat-button {
+  display: none;
+}
 
 /* =========================
    MOBILE
