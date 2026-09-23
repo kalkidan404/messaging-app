@@ -1,7 +1,6 @@
+
 import { useContext, useEffect, useState } from "react";
-
 import { AuthContext } from "../context/AuthContext";
-
 import { getUsers } from "../api/users";
 import { getMessages } from "../api/messages";
 
@@ -10,12 +9,13 @@ import ConversationList from "../components/ConversationList";
 import ChatWindow from "../components/ChatWindow";
 
 function MessagingPage() {
-  const { user, loading: authLoading } = useContext(AuthContext);
+  const { user, loading: authLoading } =
+    useContext(AuthContext);
 
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showConversations, setShowConversations] = useState(false);
+  const [selectedUser, setSelectedUser] =
+    useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -36,18 +36,38 @@ function MessagingPage() {
             getMessages()
           ]);
 
-        const usersData = Array.isArray(usersResponse)
-          ? usersResponse
-          : usersResponse?.data || [];
+        /*
+          Some APIs return:
 
-        const messagesData = Array.isArray(messagesResponse)
-          ? messagesResponse
-          : messagesResponse?.data || [];
+          [
+            {...},
+            {...}
+          ]
+
+          Others return:
+
+          {
+            data: [...]
+          }
+
+          Handle both.
+        */
+
+        const usersData =
+          Array.isArray(usersResponse)
+            ? usersResponse
+            : usersResponse?.data || [];
+
+        const messagesData =
+          Array.isArray(messagesResponse)
+            ? messagesResponse
+            : messagesResponse?.data || [];
 
         setUsers(usersData);
         setMessages(messagesData);
       } catch (error) {
         console.error(error);
+
         setError(
           error.message ||
             "Unable to load your messages."
@@ -59,11 +79,6 @@ function MessagingPage() {
 
     loadData();
   }, [user, authLoading]);
-
-  const handleSelectUser = (userId) => {
-    setSelectedUser(userId);
-    setShowConversations(false);
-  };
 
   if (authLoading || loading) {
     return (
@@ -86,34 +101,18 @@ function MessagingPage() {
     <main className="messaging-page">
       <Sidebar />
 
-      <div
-        className={`conversation-overlay ${
-          showConversations ? "visible" : ""
-        }`}
-        onClick={() => setShowConversations(false)}
+      <ConversationList
+        users={users}
+        messages={messages}
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
       />
-
-      <div
-        className={`conversation-panel ${
-          showConversations ? "open" : ""
-        }`}
-      >
-        <ConversationList
-          users={users}
-          messages={messages}
-          selectedUser={selectedUser}
-          setSelectedUser={handleSelectUser}
-        />
-      </div>
 
       <ChatWindow
         users={users}
         messages={messages}
         selectedUser={selectedUser}
         setMessages={setMessages}
-        onOpenConversations={() =>
-          setShowConversations(true)
-        }
       />
     </main>
   );

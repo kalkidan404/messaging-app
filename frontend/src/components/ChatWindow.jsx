@@ -1,7 +1,6 @@
+
 import { useContext, useMemo, useState } from "react";
-
 import { AuthContext } from "../context/AuthContext";
-
 import {
   sendMessage,
   updateMessage,
@@ -12,8 +11,7 @@ function ChatWindow({
   users,
   messages,
   selectedUser,
-  setMessages,
-  onOpenConversations
+  setMessages
 }) {
   const { user } = useContext(AuthContext);
 
@@ -140,14 +138,6 @@ function ChatWindow({
   if (!selectedUser) {
     return (
       <section className="chat-window empty-chat">
-        <button
-          type="button"
-          className="mobile-conversations-button"
-          onClick={onOpenConversations}
-        >
-          ☰ Conversations
-        </button>
-
         <h2>Your Correspondence</h2>
 
         <p>
@@ -160,14 +150,6 @@ function ChatWindow({
   return (
     <section className="chat-window">
       <header className="chat-header">
-        <button
-          type="button"
-          className="mobile-chat-button"
-          onClick={onOpenConversations}
-        >
-          ☰
-        </button>
-
         <div className="chat-avatar">
           {selectedPerson?.profileImage ? (
             <img
